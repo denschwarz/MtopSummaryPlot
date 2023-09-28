@@ -13,6 +13,7 @@ class measurement:
         self.__ref = None
         self.__lumi = None
         self.__color = None
+        self.__oneDigit = False
 
     def setResult(self, mtop, stat, sysuncert_down, sysuncert_up):
         self.__mtop = mtop
@@ -21,6 +22,9 @@ class measurement:
         self.__uncertSysUp = sysuncert_up
         self.__uncertTotalDown = sqrt(stat*stat + sysuncert_down*sysuncert_down)
         self.__uncertTotalUp = sqrt(stat*stat + sysuncert_up*sysuncert_up)
+
+    def useOneDigit(self):
+        self.__oneDigit = True
 
     def setReference(self, ref):
         self.__ref = ref
@@ -54,17 +58,17 @@ class measurement:
 
     def mt_string(self):
         # mt value
-        string = "%.2f" %(self.__mtop)
+        string = "%.2f" %(self.__mtop) if not self.__oneDigit else "%.1f  " %(self.__mtop)
         # stat uncert
         if self.__uncertStat > 0.00001:
-            string += " #pm %.2f (stat)" %(self.__uncertStat)
+            string += " #pm %.2f (stat)" %(self.__uncertStat) if not self.__oneDigit else " #pm %.1f   (stat)" %(self.__uncertStat)
         else:
             string += ""
         # sys uncert
         if abs(self.__uncertSysUp-self.__uncertSysDown)<0.00001:
-            string += " #pm %.2f (sys)"%(self.__uncertSysUp)
+            string += " #pm %.2f (sys)"%(self.__uncertSysUp)  if not self.__oneDigit else " #pm %.1f   (sys)"%(self.__uncertSysUp)
         else:
-            string += "   {}^{#plus%.2f}_{#minus%.2f}  (sys)"%(self.__uncertSysUp, self.__uncertSysDown)
+            string += "   {}^{#plus%.2f}_{#minus%.2f}  (sys)"%(self.__uncertSysUp, self.__uncertSysDown)  if not self.__oneDigit else "   {}^{#plus%.1f  }_{#minus%.1f  }  (sys)"%(self.__uncertSysUp, self.__uncertSysDown)
         string += " GeV"
         return string
 

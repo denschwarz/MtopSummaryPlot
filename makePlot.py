@@ -10,17 +10,37 @@ from measurementData import measurements
 measurements_all = []
 measurements_direct = []
 measurements_indirect = []
+measurements_msbar = []
 measurements_other = []
 measurements_boosted = []
 
+list_oneDigit = [
+    "JHEP 07 (2011) 04",
+    "EPJC 72 (2012) 2202",
+    "EPJC 73 (2013) 2494",
+    "PLB 728 (2014) 496",
+    "JHEP 08 (2016) 029",
+    "JHEP 09 (2017) 051",
+    "JHEP 12 (2016) 123",
+    "EPJC 77 (2017) 467",
+    "EPJC 79 (2019) 368",
+    "EPJC 79 (2019) 368",
+    "EPJC 80 (2020) 658",
+    "PRL 124 (2020) 202001",
+    "JHEP 07 (2023) 213",
+    "PRL 124 (2020) 202001",
+]
+
 for (category, channel, com, method, ref, mt, stat, sysdown, sysup) in measurements:
-    m = measurement(channel+", "+method+", "+com+" TeV")
+    m = measurement(channel+" "+com+" TeV, "+method)
     if mt is None:
         continue
     if stat is None:
         stat = 0.
     m.setResult(mt, stat, sysdown, sysup)
     m.setReference(ref)
+    if ref in list_oneDigit:
+        m.useOneDigit()
     if category == "direct":
         m.setColor(ROOT.kRed)
         measurements_direct.append(m)
@@ -28,6 +48,10 @@ for (category, channel, com, method, ref, mt, stat, sysdown, sysup) in measureme
     elif category == "indirect":
         m.setColor(ROOT.kAzure+7)
         measurements_indirect.append(m)
+        measurements_all.append(m)
+    elif category == "msbar":
+        m.setColor(ROOT.kAzure+7)
+        measurements_msbar.append(m)
         measurements_all.append(m)
     elif category == "other":
         m.setColor(ROOT.kOrange-6)
@@ -41,6 +65,7 @@ for (category, channel, com, method, ref, mt, stat, sysdown, sysup) in measureme
 Nall = len(measurements_all)
 Ndirect = len(measurements_direct)
 Nindirect = len(measurements_indirect)
+Nmsbar = len(measurements_msbar)
 Nother = len(measurements_other)
 Nboosted = len(measurements_boosted)
 
@@ -48,10 +73,12 @@ Nboosted = len(measurements_boosted)
 ## Contruct results graphs and labels
 g_direct_tot = ROOT.TGraphAsymmErrors(len(measurements_direct))
 g_indirect_tot = ROOT.TGraphAsymmErrors(len(measurements_indirect))
+g_msbar_tot = ROOT.TGraphAsymmErrors(len(measurements_msbar))
 g_other_tot = ROOT.TGraphAsymmErrors(len(measurements_other))
 g_boosted_tot = ROOT.TGraphAsymmErrors(len(measurements_boosted))
 g_direct_stat = ROOT.TGraphAsymmErrors(len(measurements_direct))
 g_indirect_stat = ROOT.TGraphAsymmErrors(len(measurements_indirect))
+g_msbar_stat = ROOT.TGraphAsymmErrors(len(measurements_msbar))
 g_other_stat = ROOT.TGraphAsymmErrors(len(measurements_other))
 g_boosted_stat = ROOT.TGraphAsymmErrors(len(measurements_boosted))
 
@@ -60,16 +87,20 @@ t_title = []
 t_category = []
 t_ref = []
 
-index = Nall-1+9
+index = Nall-1+12
 index_max = index
 index_direct_max = -1
 index_direct_min = -1
 index_indirect_max = -1
 index_indirect_min = -1
+index_msbar_max = -1
+index_msbar_min = -1
 index_other_max = -1
 index_other_min = -1
 
-t_category.append( (index, "Indirect measurements") )
+t_category.append( (index, "Lagrangian mass extractions") )
+index = index -1
+t_category.append( (index, "Pole mass from cross section") )
 index = index -1
 for i, m in enumerate(measurements_indirect):
     if i==0:
@@ -80,7 +111,24 @@ for i, m in enumerate(measurements_indirect):
     g_indirect_tot.SetPointError(i, m.uncertTotalDown(), m.uncertTotalUp(), 0.0, 0.0)
     g_indirect_stat.SetPoint(i, m.mtop(), index)
     g_indirect_stat.SetPointError(i, m.uncertStat(), m.uncertStat(), 0.0, 0.0)
-    t_mt_values.append( (index, "#it{m}_{t}^{pole} = "+m.mt_string()) )
+    t_mt_values.append( (index, "#it{m}_{t}^{pole} = "+m.mt_string().replace("sys", "tot")) )
+    t_title.append( (index, m.infoString()) )
+    t_ref.append( (index, m.reference()) )
+    index = index -1
+
+index = index -1
+t_category.append( (index, "#bar{MS} mass from cross section") )
+index = index -1
+for i, m in enumerate(measurements_msbar):
+    if i==0:
+        index_msbar_max = index
+    if i==len(measurements_msbar)-1:
+        index_msbar_min = index
+    g_msbar_tot.SetPoint(i, m.mtop(), index)
+    g_msbar_tot.SetPointError(i, m.uncertTotalDown(), m.uncertTotalUp(), 0.0, 0.0)
+    g_msbar_stat.SetPoint(i, m.mtop(), index)
+    g_msbar_stat.SetPointError(i, m.uncertStat(), m.uncertStat(), 0.0, 0.0)
+    t_mt_values.append( (index, "#it{m}_{t}(#it{m}_{t}) = "+m.mt_string().replace("sys", "tot")) )
     t_title.append( (index, m.infoString()) )
     t_ref.append( (index, m.reference()) )
     index = index -1
@@ -151,11 +199,13 @@ color_tot = ROOT.TColor.GetColor("#2b2b2b")
 
 setResultStyle(g_direct_tot, color_tot, color_tot)
 setResultStyle(g_indirect_tot, color_tot, color_tot)
+setResultStyle(g_msbar_tot, color_tot, color_tot)
 setResultStyle(g_other_tot, color_tot, color_tot)
 setResultStyle(g_boosted_tot, color_tot, color_tot)
 
 setResultStyle(g_direct_stat, color_tot, color_stat, option="stat")
 setResultStyle(g_indirect_stat, color_tot, color_stat, option="stat")
+setResultStyle(g_msbar_stat, color_tot, color_stat, option="stat")
 setResultStyle(g_other_stat, color_tot, color_stat, option="stat")
 setResultStyle(g_boosted_stat, color_tot, color_stat, option="stat")
 
@@ -234,10 +284,12 @@ l_indirect.Draw("SAME")
 
 g_direct_tot.Draw("P SAME")
 g_indirect_tot.Draw("P SAME")
+g_msbar_tot.Draw("P SAME")
 g_boosted_tot.Draw("P SAME")
 g_other_tot.Draw("P SAME")
 g_direct_stat.Draw("P SAME")
 g_indirect_stat.Draw("P SAME")
+g_msbar_stat.Draw("P SAME")
 g_boosted_stat.Draw("P SAME")
 g_other_stat.Draw("P SAME")
 
@@ -254,14 +306,17 @@ for l in [line1]:
 allTexts = []
 x_mt = 0.63
 for (index, text) in t_mt_values:
+    x = x_mt
+    # if index >= index_msbar_min and index <= index_msbar_max:
+    #     x -= 0.1
     y = margin_bottom + (index-ymin)*y_perindex
-    t_latex = addText(x_mt, y, text)
+    t_latex = addText(x, y, text)
     allTexts.append(t_latex)
 
 x_ref = 0.875
 for (index, text) in t_ref:
     y = margin_bottom + (index-ymin)*y_perindex
-    t_latex = addText(x_ref, y, text, font=43, size=10, color=15)
+    t_latex = addText(x_ref, y, text, font=43, size=10, color=14)
     allTexts.append(t_latex)
 
 x_title = margin_left + 0.01
@@ -274,11 +329,11 @@ for (index, text) in t_category:
     y = margin_bottom + (index-ymin)*y_perindex
     x = x_title
     fontsize = 22
-    if "Boosted" in text or "Alternative" in text or "Full Reconstruction" in text:
+    if "Boosted" in text or "Alternative" in text or "Full Reconstruction" in text or "Pole mass" in text or "#bar{MS}" in text:
         fontsize = 18
         y -= 0.007
         # x += 0.01
-    t_latex = addText(x, y+0.007, text, font=43, size=fontsize, color=16)
+    t_latex = addText(x, y+0.007, text, font=43, size=fontsize, color=15)
     allTexts.append(t_latex)
 ################################################################################
 # CMS logo
