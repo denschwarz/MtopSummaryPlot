@@ -24,7 +24,6 @@ list_oneDigit = [
     "JHEP 12 (2016) 123",
     "EPJC 77 (2017) 467",
     "EPJC 79 (2019) 368",
-    "EPJC 79 (2019) 368",
     "EPJC 80 (2020) 658",
     "PRL 124 (2020) 202001",
     "JHEP 07 (2023) 213",
@@ -40,7 +39,8 @@ for (category, channel, com, method, ref, mt, stat, sysdown, sysup) in measureme
     m.setResult(mt, stat, sysdown, sysup)
     m.setReference(ref)
     if ref in list_oneDigit:
-        m.useOneDigit()
+        if not (ref == "EPJC 79 (2019) 368" and category == "direct"):
+            m.useOneDigit()
     if category == "direct":
         m.setColor(ROOT.kRed)
         measurements_direct.append(m)
