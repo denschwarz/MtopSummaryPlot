@@ -36,9 +36,9 @@ measurements = [
     # ("indirect", "Dilepton",    "7+8",                     "ATLAS+CMS cross section", "JHEP 07 (2023) 213",    173.4,  None, 2.0,  1.8),
     ("indirect", "Dilepton",    "7+8",                         "ATLAS+CMS cross section", "JHEP 07 (2023) 213",    173.4,  None, 2.0,  1.8),
     # ("indirect", "Dilepton",     "13",     "t#bar{t}+jet differential cross section", "JHEP 07 (2023) 077",    172.94, None, 1.40, 1.43),
-    ("indirect", "Differential t#bar{t}+jet",     "13",     "NLO #otimes CT14", "JHEP 07 (2023) 077",    172.13, None, 1.43, 1.43),
+    ("indirect", "Differential t#bar{t}+jet",     "13",     "NLO #otimes CT18", "JHEP 07 (2023) 077",    172.13, None, 1.43, 1.43),
     ("boosted",  "Boosted",      "13",                     "XCone jet mass unfolded", "EPJC 83 (2023) 560",    173.06, 0.24, 0.80, 0.80),
-    ("direct",   "Lepton+jets",  "13",                          "Profile likelihood", "arXiv:2211.01456",      171.77, 0.04, 0.37, 0.37),
-    ("direct",   "Combination", "7+8",                                        "BLUE", "",      172.52, 0.14, 0.39, 0.39),
+    ("direct",   "Lepton+jets",  "13",                          "Profile likelihood", "EPJC 83 (2023) 963",      171.77, 0.04, 0.37, 0.37),
+    ("direct",   "Combination", "7+8",                                        "BLUE", "TOP-22-001",      172.52, 0.14, 0.39, 0.39),
 
 ]
