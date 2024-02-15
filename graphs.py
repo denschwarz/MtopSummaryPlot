@@ -48,12 +48,12 @@ def getDummyGraph(xmin, xmax, ymin, ymax):
     g.SetMarkerSize(0.0)
     return g
 
-def getCMS(x, y):
+def getCMS(x, y, factor=1.0):
     cmstext = ROOT.TLatex(3.5, 24, "CMS")
     cmstext.SetNDC()
     cmstext.SetTextAlign(13)
     cmstext.SetTextFont(62)
-    cmstext.SetTextSize(0.08)
+    cmstext.SetTextSize(0.08*factor)
     cmstext.SetX(x)
     cmstext.SetY(y)
     return cmstext
