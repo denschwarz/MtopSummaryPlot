@@ -100,7 +100,7 @@ def main(combinationPublic):
     index_other_max = -1
     index_other_min = -1
 
-    t_category.append( (index, "Lagrangian mass extractions") )
+    t_category.append( (index, "Indirect mass extractions") )
     index = index -1
     t_category.append( (index, "Pole mass from cross section") )
     index = index -1
@@ -339,7 +339,7 @@ def main(combinationPublic):
         x = x_title
         fontstyle = 43
         fontsize = 30
-        if text in ["Lagrangian mass extractions", "Direct measurements"]:
+        if text in ["Indirect mass extractions", "Direct measurements"]:
             fontstyle = 63
         if "Boosted" in text or "Alternative" in text or "Full reconstruction" in text or "Pole mass" in text or "#bar{MS}" in text:
             fontsize = 18
@@ -369,7 +369,7 @@ def main(combinationPublic):
     allTexts.append(addText(.675, .925, "[JHEP 07 (2023) 213]", font=43, size=10, color=14))
 
     if combinationPublic:
-        allTexts.append(addText(.675, .872, "[arXiv:2402.08713]", font=43, size=10, color=14))
+        allTexts.append(addText(.675, .872, "[PRL 132 (2024) 261902]", font=43, size=10, color=14))
     else:
         allTexts.append(addText(.675, .872, "[TOP-22-001]", font=43, size=10, color=ROOT.kBlue))
 
